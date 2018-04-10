@@ -29,6 +29,7 @@ class LR:
                     # 动态学习率
                     eta = self.init_eta / (1 + idx_epoch + idx_sample) + 0.01
                     h = sigmoid(x @ w)
+                    # dln(L)/dw = (y-h)*x，这里的L是likelihood，梯度上升
                     w += eta * (y - h) * x
         elif style == 'batch':
             w = self.w if warm_start else np.ones((n, 1))
