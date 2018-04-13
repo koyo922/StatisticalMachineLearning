@@ -2,6 +2,7 @@ import numpy as np
 import sklearn.utils
 from sklearn.metrics import classification_report, accuracy_score
 import matplotlib.pyplot as plt
+from utils import load_data
 
 
 def sigmoid(x):
@@ -32,10 +33,10 @@ class LR:
                     # dln(L)/dw = (y-h)*x，这里的L是likelihood，梯度上升
                     w += eta * (y - h) * x
         elif style == 'batch':
-            w = self.w if warm_start else np.ones((n, 1))
+            w = self.w if warm_start else np.ones(n)
             for idx_epoch in range(n_epoch):
                 h = sigmoid(x_train @ w)
-                w += self.eta * x_train.T @ (y_train.reshape(-1, 1) - h)
+                w += self.eta * x_train.T @ (y_train - h)
         else:
             raise AttributeError('style should not be: {}'.format(style))
 
@@ -82,20 +83,9 @@ class LR:
         plt.show()
 
 
-# 数据下载自 http://www.hankcs.com/wp-content/uploads/2015/09/testSet.txt
-def load_data(path='./testSet.txt'):
-    X, Y = [], []
-    with open(path, 'r') as f:
-        for line in f:
-            *x, y = line.split()
-            # 注意x増广到齐次(否则没有bias)
-            X.append([1] + [float(v) for v in x])
-            Y.append(float(y))
-    return np.array(X), np.array(Y)
-
-
 if __name__ == '__main__':
-    x, y = load_data()
+    x, y = load_data('./testSet.txt')  # 数据下载自 http://www.hankcs.com/wp-content/uploads/2015/09/testSet.txt
+    x = np.c_[np.ones(x.shape[0]), x]  # 注意x増广到齐次(否则没有bias)
 
     lr = LR()
 
