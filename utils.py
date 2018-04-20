@@ -1,5 +1,56 @@
 import numpy as np
+from numpy import ones
+from numpy.random import choice
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import normalize
+from contextlib import contextmanager
+from time import time
+from warnings import warn
+
+
+def sample_dataset(*Ds, n=None, frac=None, replace=False, seed=None):
+    # 注意支持多个数据集一起采样；要保持下标一致
+    # e.g. X_train, y_train如果一起才的下标不一致就错位了
+    Ns = [D.shape[0] for D in Ds]
+    assert min(Ns) == max(Ns), '#sample differs in each dataset'
+    N = Ns[0]
+    if n is None:
+        assert frac is not None, 'both n and frac are None!'
+        assert 0 < frac <= 1
+        n = N * frac
+    if n > N and not replace:
+        warn('n > N, "replace" forced to True')
+        replace = True
+    if seed is not None:
+        np.random.seed(seed)
+    idx = choice(N, n, replace=replace)
+    return [D[idx, ...] for D in Ds]
+
+
+_timed_task_id = 0
+
+
+@contextmanager
+def timed(task_name=None, pattern='-------------------- Task: <{task_name:>20s}> cost {cost:.4f}s'):
+    if task_name is None:
+        global _timed_task_id  # 注意不是nonlocal
+        task_name = 'T_{:03d}'.format(_timed_task_id)
+        _timed_task_id += 1
+    t0 = time()
+    yield
+    t1 = time()
+    print(pattern.format(task_name=task_name, cost=t1 - t0))
+
+
+def append_bias(x, flatten_to_2D=True):
+    N = x.shape[0]
+    if flatten_to_2D:
+        x = x.reshape((N, -1))
+    return np.c_[ones(N), x]
+
+
+def l1_norm(x, axis=-1):
+    return normalize(x, axis=axis, norm='l1')
 
 
 def load_data(path: str) -> np.array:

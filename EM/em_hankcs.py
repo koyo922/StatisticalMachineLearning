@@ -1,11 +1,7 @@
 import numpy as np
 from scipy.stats import binom
-from sklearn.preprocessing import normalize
 from sklearn.exceptions import ConvergenceWarning
-
-
-def l1_norm(x, axis=1):
-    return normalize(x, axis=axis, norm='l1')
+from utils import l1_norm  # 参见相应模块的代码
 
 
 class EmTwoCoins:

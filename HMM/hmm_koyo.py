@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.random import multinomial
-from sklearn.preprocessing import label_binarize
+from sklearn.preprocessing import label_binarize as one_hot
 
 
 def draw_from(distribution):
@@ -86,7 +86,7 @@ class HMM:
             new_A = ξ.sum(axis=-1) / γ[:, :-1].sum(axis=-1)  # 注意γ的最后一帧不能要
             # B[j,k] = γ[j, O[t]==k].mean(axis=1)
             #        = γ[j,:] @ O.one_hot()[:,k]
-            new_B = γ @ label_binarize(O, range(self.B.shape[1])) / γ.sum(axis=1).reshape(-1, 1)
+            new_B = γ @ one_hot(O, range(self.B.shape[1])) / γ.sum(axis=1).reshape(-1, 1)
 
             if all(approx(a, b) for a, b in zip([self.π, self.A, self.B], [new_π, new_A, new_B])):
                 done = True
