@@ -75,3 +75,22 @@ if __name__ == '__main__':
     print('\n\n对偶形式')
     pctr.fit(use_dual=True)
     pctr.show_history(use_dual=True)
+
+"""
+原始形式
+w	b
+(array([3, 3]), 1)
+(array([2, 0]), 0)
+(array([ 1, -3]), -1)
+(array([5, 0]), 0)
+(array([ 4, -3]), -1)
+
+
+对偶形式
+误分类点	w	b
+(array([3, 3]), (array([3, 3]), 1))
+(array([1, 3]), (array([2, 0]), 0))
+(array([1, 3]), (array([ 1, -3]), -1))
+(array([4, 3]), (array([5, 0]), 0))
+(array([1, 3]), (array([ 4, -3]), -1))
+"""
